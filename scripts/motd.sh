@@ -1,5 +1,7 @@
 #!/bin/bash -eux
 
+[[ "$MOTD" =~ ^(true|yes|on|1|TRUE|YES|ON])$ ]] && exit
+
 echo "==> Recording box generation date"
 date > /etc/vagrant_box_build_date
 

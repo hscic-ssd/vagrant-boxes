@@ -1,5 +1,7 @@
 #!/bin/bash -eux
 
+[[ "$CLEAN" =~ ^(true|yes|on|1|TRUE|YES|ON])$ ]] && exit
+
 SSH_USER=${SSH_USERNAME:-vagrant}
 
 # Make sure udev does not block our network - http://6.ptmc.org/?p=164
@@ -15,7 +17,7 @@ fi
 # Ubuntu 12.04 & 14.04
 if [ -d "/var/lib/dhcp" ]; then
     rm /var/lib/dhcp/*
-fi 
+fi
 
 # Add delay to prevent "vagrant reload" from failing
 echo "pre-up sleep 2" >> /etc/network/interfaces

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+[[ "$VAGRANT" =~ ^(true|yes|on|1|TRUE|YES|ON])$ ]] && exit
+
 date > /etc/vagrant_box_build_time
 
 SSH_USER=${SSH_USERNAME:-vagrant}
