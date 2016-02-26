@@ -1,6 +1,6 @@
 #!/bin/bash -eux
 
-[[ "$UPDATE" =~ ^(true|yes|on|1|TRUE|YES|ON])$ ]] && exit
+[[ ! "$UPDATE" =~ ^(true|yes|on|1|TRUE|YES|ON])$ ]] && exit
 
 # Disable the release upgrader
 echo "==> Disabling the release upgrader"

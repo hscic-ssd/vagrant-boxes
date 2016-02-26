@@ -1,6 +1,6 @@
 #!/bin/bash -eux
 
-[[ "$VIRTUALBOX" =~ ^(true|yes|on|1|TRUE|YES|ON])$ ]] && exit
+[[ ! "$VIRTUALBOX" =~ ^(true|yes|on|1|TRUE|YES|ON])$ ]] && exit
 
 SSH_USER=${SSH_USERNAME:-vagrant}
 

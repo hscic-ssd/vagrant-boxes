@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/bash -eux
 
-[[ "$VAGRANT" =~ ^(true|yes|on|1|TRUE|YES|ON])$ ]] && exit
+[[ ! "$VAGRANT" =~ ^(true|yes|on|1|TRUE|YES|ON])$ ]] && exit
 
 date > /etc/vagrant_box_build_time
 

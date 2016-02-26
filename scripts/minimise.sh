@@ -1,6 +1,6 @@
 #!/bin/bash -eux
 
-[[ "$MINIMISE" =~ ^(true|yes|on|1|TRUE|YES|ON])$ ]] && exit
+[[ ! "$MINIMISE" =~ ^(true|yes|on|1|TRUE|YES|ON])$ ]] && exit
 
 echo "==> Disk usage before minimization"
 df -h
