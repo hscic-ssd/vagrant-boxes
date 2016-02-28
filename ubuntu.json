@@ -1,105 +1,90 @@
 {
     "builders": [{
+        "type": "virtualbox-iso",
+        "guest_os_type": "{{ user `guest_os_type` }}",
         "boot_command": [
-            "<esc><esc><enter><wait>",
-            "/install/vmlinuz noapic ",
-            "file=/floppy/{{ user `preseed` }} ",
-            "debian-installer=en_GB auto locale=en_GB kbd-chooser/method=uk ",
+            "<esc><wait><esc><wait><enter><wait>",
+            "/install/vmlinuz noapic file=/floppy/{{ user `iso_preseed` }} ",
             "hostname={{ user `hostname` }} ",
-            "fb=false debconf/frontend=noninteractive ",
-            "keyboard-configuration/modelcode=SKIP keyboard-configuration/layout=GB ",
-            "keyboard-configuration/variant=GB console-setup/ask_detect=false ",
+            "fb=false ",
+            "console-setup/ask_detect=false ",
+            "debconf/frontend=noninteractive ",
+            "debian-installer=en_GB auto locale=en_GB ",
+            "kbd-chooser/method=uk ",
+            "keyboard-configuration/layout=GB ",
+            "keyboard-configuration/modelcode=SKIP ",
+            "keyboard-configuration/variant=GB ",
             "passwd/user-fullname={{ user `ssh_fullname` }} ",
             "passwd/user-password={{ user `ssh_password` }} ",
             "passwd/user-password-again={{ user `ssh_password` }} ",
             "passwd/username={{ user `ssh_username` }} ",
-            "initrd=/install/initrd.gz -- <enter>"
+            "initrd=/install/initrd.gz -- ",
+            "<enter><wait>"
+        ],
+        "floppy_files": [
+            "preseed/*.cfg"
+        ],
+        "vboxmanage": [
+            [ "modifyvm", "{{ .Name }}", "--cpus", "{{ user `cpus` }}" ],
+            [ "modifyvm", "{{ .Name }}", "--memory", "{{ user `memory` }}" ]
         ],
         "disk_size": "{{ user `disk_size` }}",
-        "floppy_files": [
-            "http/{{ user `preseed` }}"
-        ],
-        "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
-        "guest_os_type": "{{ user `virtualbox_guest_os_type` }}",
-        "hard_drive_interface": "sata",
-        "headless": "{{ user `headless` }}",
+        "vm_name": "{{user `vm_name`}}",
+        "iso_url": "{{ user `iso_url` }}",
         "iso_checksum": "{{ user `iso_checksum` }}",
         "iso_checksum_type": "{{ user `iso_checksum_type` }}",
-        "iso_urls": [
-            "{{ user `iso_path` }}/{{ user `iso_name` }}",
-            "{{ user `iso_url` }}"
-        ],
-        "output_directory": "output-{{ user `vm_name` }}-virtualbox-iso",
-        "shutdown_command": "echo '{{ user `ssh_password` }}'|sudo -S shutdown -P now",
+        "headless": "{{ user `headless` }}",
+        "shutdown_command": "echo '{{ user `ssh_password` }}' | sudo -S shutdown -P now",
         "ssh_password": "{{ user `ssh_password` }}",
         "ssh_username": "{{ user `ssh_username` }}",
-        "ssh_wait_timeout": "10000s",
-        "type": "virtualbox-iso",
-        "vboxmanage": [
-            [ "modifyvm", "{{.Name}}", "--memory", "{{ user `memory` }}" ],
-            [ "modifyvm", "{{.Name}}", "--cpus", "{{ user `cpus` }}" ]
-        ],
-        "virtualbox_version_file": ".vbox_version",
-        "vm_name": "{{user `vm_name`}}"
+        "ssh_wait_timeout": "60m"
     }],
     "provisioners": [{
         "type": "shell",
-        "execute_command": "echo '{{ user `ssh_password` }}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+        "execute_command": "echo '{{ user `ssh_password` }}' | {{ .Vars }} sudo -E -S bash '{{ .Path }}'",
         "environment_vars": [
-            "UPDATE={{user `update`}}",
-            "VAGRANT={{user `vagrant`}}",
-            "SSHD={{user `sshd`}}",
-            "VIRTUALBOX={{user `virtualbox`}}",
-            "DOCKER={{user `docker`}}",
-            "MOTD={{user `motd`}}",
-            "MINIMISE={{user `minimise`}}",
-            "CLEAN={{user `clean`}}",
-            "INSTALL_VAGRANT_KEY={{user `install_vagrant_key`}}",
-            "SSH_USERNAME={{user `ssh_username`}}",
-            "SSH_PASSWORD={{user `ssh_password`}}"
+            "SSH_USERNAME={{ user `ssh_username` }}",
+            "SSH_PASSWORD={{ user `ssh_password` }}",
+            "BUILD_SCRIPT_BASE={{ user `build_script_base` }}",
+            "BUILD_SCRIPT_VAGRANT={{ user `build_script_vagrant` }}",
+            "BUILD_SCRIPT_VIRTUALBOX={{ user `build_script_virtualbox` }}",
+            "BUILD_SCRIPT_DOCKER={{ user `build_script_docker` }}",
+            "BUILD_SCRIPT_CLEANUP={{ user `build_script_cleanup` }}",
+            "BUILD_SCRIPT_ZERODISK={{ user `build_script_zerodisk` }}"
         ],
         "scripts": [
-            "scripts/update.sh",
+            "scripts/base.sh",
             "scripts/vagrant.sh",
-            "scripts/sshd.sh",
             "scripts/virtualbox.sh",
             "scripts/docker.sh",
-            "scripts/motd.sh",
-            "scripts/minimise.sh",
-            "scripts/clean.sh"
+            "scripts/cleanup.sh",
+            "scripts/zerodisk.sh"
         ]
     }],
     "post-processors": [{
         "type": "vagrant",
-        "vagrantfile_template": "{{ user `vagrantfile_template` }}",
-        "output": "box/{{.Provider}}/{{user `vm_name`}}-{{user `version`}}.box",
-        "keep_input_artifact": false
+        "keep_input_artifact": false,
+        "output": "build/{{ user `vm_name` }}-{{ user `version` }}.{{ .Provider }}"
     }],
     "variables": {
         "version": "0.0.0",
-        "headless": "",
-        "update": "true",
-        "vagrant": "true",
-        "sshd": "true",
-        "virtualbox": "true",
-        "docker": "true",
-        "motd": "true",
-        "minimise": "true",
-        "clean": "true",
-        "install_vagrant_key": "true",
-        "hostname": "vagrant",
+        "headless": "false",
+        "build_script_base": "true",
+        "build_script_vagrant": "true",
+        "build_script_virtualbox": "true",
+        "build_script_docker": "false",
+        "build_script_cleanup": "true",
+        "build_script_zerodisk": "true",
         "ssh_fullname": "vagrant",
         "ssh_password": "vagrant",
         "ssh_username": "vagrant",
-        "vagrantfile_template": "",
-        "iso_name": "ubuntu-14.04.4-server-amd64.iso",
-        "iso_path": "~/images",
+        "hostname": "vagrant",
         "iso_url": "http://releases.ubuntu.com/14.04/ubuntu-14.04.4-server-amd64.iso",
         "iso_checksum": "3ffb7a3690ce9a07ac4a4d1b829f990681f7e47d",
         "iso_checksum_type": "sha1",
-        "preseed" : "preseed-14.04.cfg",
-        "virtualbox_guest_os_type": "Ubuntu_64",
-        "vm_name": "ubuntu-14.04",
+        "iso_preseed" : "ubuntu-preseed.cfg",
+        "guest_os_type": "Ubuntu_64",
+        "vm_name": "ubuntu",
         "cpus": "1",
         "memory": "512",
         "disk_size": "16384"

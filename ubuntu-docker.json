@@ -1,9 +1,8 @@
 {
-  "_command": "packer build -var version=$(date +%Y%m%d).0.0 -var-file=ubuntu-docker.json ubuntu.json",
-  "vm_name": "ubuntu-docker",
-  "docker": "true",
-  "preseed": "preseed-14.04-default.cfg",
-  "cpus": "4",
-  "memory": "16384",
-  "disk_size": "32768"
+    "vm_name": "ubuntu-docker",
+    "cpus": "4",
+    "memory": "16384",
+    "disk_size": "131072",
+    "iso_preseed" : "ubuntu-preseed.cfg",
+    "build_script_docker": "true"
 }
