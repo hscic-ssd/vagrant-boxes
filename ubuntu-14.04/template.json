@@ -22,7 +22,7 @@
             "<enter><wait>"
         ],
         "floppy_files": [
-            "preseed/*.cfg"
+            "{{ user `build_os` }}/preseed/*.cfg"
         ],
         "vboxmanage": [
             [ "modifyvm", "{{ .Name }}", "--cpus", "{{ user `cpus` }}" ],
@@ -53,22 +53,23 @@
             "BUILD_SCRIPT_ZERODISK={{ user `build_script_zerodisk` }}"
         ],
         "scripts": [
-            "scripts/base.sh",
-            "scripts/vagrant.sh",
-            "scripts/virtualbox.sh",
-            "scripts/docker.sh",
-            "scripts/cleanup.sh",
-            "scripts/zerodisk.sh"
+            "{{ user `build_os` }}/scripts/base.sh",
+            "{{ user `build_os` }}/scripts/vagrant.sh",
+            "{{ user `build_os` }}/scripts/virtualbox.sh",
+            "{{ user `build_os` }}/scripts/docker.sh",
+            "{{ user `build_os` }}/scripts/cleanup.sh",
+            "{{ user `build_os` }}/scripts/zerodisk.sh"
         ]
     }],
     "post-processors": [{
         "type": "vagrant",
         "keep_input_artifact": false,
-        "output": "build/{{ user `vm_name` }}-{{ user `version` }}.{{ .Provider }}"
+        "output": "boxes/{{ user `vm_name` }}-{{ user `version` }}.{{ .Provider }}"
     }],
     "variables": {
         "version": "0.0.0",
         "headless": "false",
+        "build_os": "ubuntu-14.04",
         "build_script_base": "true",
         "build_script_vagrant": "true",
         "build_script_virtualbox": "true",
@@ -82,7 +83,7 @@
         "iso_url": "http://releases.ubuntu.com/14.04/ubuntu-14.04.4-server-amd64.iso",
         "iso_checksum": "3ffb7a3690ce9a07ac4a4d1b829f990681f7e47d",
         "iso_checksum_type": "sha1",
-        "iso_preseed" : "ubuntu-preseed.cfg",
+        "iso_preseed" : "default.cfg",
         "guest_os_type": "Ubuntu_64",
         "vm_name": "ubuntu",
         "cpus": "1",
