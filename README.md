@@ -13,11 +13,17 @@ Testing
 -------
 
 ```bash
-$ make build test OS=ubuntu VER=14.04 TYPE=docker
+$ make build test OS_NAME=ubuntu OS_VER=14.04 TYPE=docker
 ```
 
 TODO
 ----
 
- * Make localisation options part of preseeding process
+ * Make localisation options part of the preseeding process
  * Build VMware-based boxes
+
+See
+---
+
+ * [kaorimatz/packer-templates](https://github.com/kaorimatz/packer-templates)
+ * [shiguredo/packer-templates](https://github.com/shiguredo/packer-templates)
