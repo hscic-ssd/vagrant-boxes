@@ -21,6 +21,7 @@ TODO
 
  * Make localisation options part of the preseeding process
  * Build VMware-based boxes
+ * Add CentOS
 
 See
 ---
